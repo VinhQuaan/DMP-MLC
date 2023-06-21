@@ -8,14 +8,14 @@ ofstream output_sol,output_trace;
 
 int main(int argc, char* argv[])
 {	
-	string Methods []= {" ", "Greedy", "LS1","LS2"," "};
+	string Methods []= {" ", "Greedy", "LS1","LS2"," "};  
 	string filename1,filename2;
 	
 	int **distance;
 	int *d=new int;
 	int *o=new int;
-	distance=readgraph(argv[1],d,o);
-	cout << "NAME" << NAME << endl;
+	distance=readgraph(argv[1],d,o);  //distance between two cities
+	cout << "NAME" << NAME << endl;  
 	int dim=*d;
 	int opt=*o;
 	double cutoff = strtod(argv[2],NULL);
@@ -40,12 +40,12 @@ int main(int argc, char* argv[])
 		}
 		
 		int *path;
-		path=greedy_algo(distance, dim);
+		path=greedy_algo(distance, dim); 
 		
 		cout<<"Path:";
 		
 		for(i=0;i<dim-1;i++)
-			pathlength += distance[path[i]][path[i+1]]*(dim-i-1);
+			pathlength += distance[path[i]][path[i+1]]*(dim-i-1);  //obj function DMP
 		pathlength += distance[path[dim-1]][path[0]];
 		output_sol << pathlength <<endl;
 		for(i=0;i<dim-1;i++)
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 			output_sol << path[i]+1<<",";
 		}
 		cout<<path[dim-1]+1<<","<<path[0]+1<<endl;
-		output_sol<<path[dim-1]+1<<","<<path[0]+1<<endl;
+		output_sol<<path[dim-1]+1<<","<<path[0]+1<<endel;
 		
 		cout<<"Result:";
 		cout<<pathlength<<endl;
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 
 		int **path;
 		int *initial;
-		initial=greedy_algo(distance, dim);
+		initial=greedy_algo(distance, dim);   //create initial with greedy method
 
 		for(i=0;i<dim-1;i++)
 			pathlength += distance[*path[i]][*path[i+1]]*(dim-i-1);
@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
 		cout<<"Initial Result:";
 		cout<<pathlength<<endl;
 
-		path= HC(distance, dim, initial, cutoff, i);
+		path= HC(distance, dim, initial, cutoff, i); //Improve
 		
 		cout<<"Path:";
 		
