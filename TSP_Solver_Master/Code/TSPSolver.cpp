@@ -6,15 +6,30 @@ using namespace std;
 
 ofstream output_sol,output_trace;
 
+int DP(int i, int mask, int **dist, int n, vector<int>memo[])
+{	
+    if (mask == ((1 << i) | 3))return dist[0][i];
+    if (memo[i][mask] != 0)
+        return memo[i][mask];
+ 
+    int res = INT_MAX;
+ 
+    for (int j = 0; j <= n; j++)
+        if ((mask & (1 << j)) && j != i && j != 0)
+            res = min(res, DP(j, mask & (~(1 << i)),dist,n,memo)
+                                    + dist[j][i]);
+    return memo[i][mask] = res;
+}
+
 int main(int argc, char* argv[])
 {	
-	string Methods []= {" ", "Greedy", "LS1","LS2"," "};  
+	string Methods []= {"DP", "Greedy", "LS1","LS2"," "};  //Cac phuong phap su dung
 	string filename1,filename2;
 	
 	int **distance;
 	int *d=new int;
 	int *o=new int;
-	distance=readgraph(argv[1],d,o);  //distance between two cities
+	distance=readgraph(argv[1],d,o); //Lay thong tin du lieu dau vao
 	cout << "NAME" << NAME << endl;  
 	int dim=*d;
 	int opt=*o;
@@ -25,6 +40,20 @@ int main(int argc, char* argv[])
 	int pathlength = 0;
 	double gap;
 	
+	if(Methods[0].compare(argv[3])==0)
+	{
+		cout << "Method:" << "DP"<<endl;
+
+		int ans = INT_MAX,n=dim;
+		vector<int>memo[n + 1];
+		
+		for(int j=0;j<n+1;j++)
+			for(int k=0;k<1<<(n+1);k++)memo[j].push_back(0);
+
+    	for (int i = 0; i < n; i++)ans = min(ans, DP(i,(1<<(n+1))-1,distance,n,memo)+distance[i][0]);
+		cout <<"Result: "<< ans;
+	}
+
 	if(Methods[1].compare(argv[3])==0)
 	{	
 		cout << "Method:" << "Greedy"<<endl;
@@ -45,7 +74,7 @@ int main(int argc, char* argv[])
 		cout<<"Path:";
 		
 		for(i=0;i<dim-1;i++)
-			pathlength += distance[path[i]][path[i+1]]*(dim-i-1);  //obj function DMP
+			pathlength += distance[path[i]][path[i+1]]*(dim-i-1);  //Ham muc tieu cho DMP
 		pathlength += distance[path[dim-1]][path[0]];
 		output_sol << pathlength <<endl;
 		for(i=0;i<dim-1;i++)
@@ -54,7 +83,7 @@ int main(int argc, char* argv[])
 			output_sol << path[i]+1<<",";
 		}
 		cout<<path[dim-1]+1<<","<<path[0]+1<<endl;
-		output_sol<<path[dim-1]+1<<","<<path[0]+1<<endel;
+		output_sol<<path[dim-1]+1<<","<<path[0]+1<<endl;
 		
 		cout<<"Result:";
 		cout<<pathlength<<endl;
@@ -86,7 +115,7 @@ int main(int argc, char* argv[])
 
 		int **path;
 		int *initial;
-		initial=greedy_algo(distance, dim);   //create initial with greedy method
+		initial=greedy_algo(distance, dim);   //Dung tham lam de sinh nghiem ban dau
 
 		for(i=0;i<dim-1;i++)
 			pathlength += distance[*path[i]][*path[i+1]]*(dim-i-1);
@@ -103,7 +132,7 @@ int main(int argc, char* argv[])
 		cout<<"Initial Result:";
 		cout<<pathlength<<endl;
 
-		path= HC(distance, dim, initial, cutoff, i); //Improve
+		path= HC(distance, dim, initial, cutoff, i); //Cai thien
 		
 		cout<<"Path:";
 		
